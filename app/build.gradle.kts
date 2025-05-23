@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.vanshika.attendancescanner"
+    namespace = "com.vanshika.klf"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.vanshika.attendancescanner"
+        applicationId = "com.vanshika.klf"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
@@ -36,6 +36,7 @@ android {
     }
     buildFeatures {
         compose = true
+        viewBinding = true
     }
 }
 
@@ -58,8 +59,14 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation (libs.retrofit)
+    implementation (libs.converter.gson)
+    implementation(libs.lottie)
+    implementation(libs.glide)
+    implementation(libs.androidsvg.aar)
+    implementation(libs.androidx.swiperefreshlayout)
+    implementation(libs.okhttp.logging.interceptor)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
