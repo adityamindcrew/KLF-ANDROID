@@ -106,6 +106,8 @@ class EventDetailActivity : AppCompatActivity() {
         val event: EventData? = eventDetail.data
 
         binding.eventTv.text = event?.title ?: "No Title Available"
+        binding.scanCountTv.text = event?.metaData?.usedSlots ?: ("" + 0)
+        binding.totalTv.text = event?.metaData?.totalSlots ?: ("" + 0)
         binding.startDateTv.text = "${event?.metaData?.startDate ?: ""} ${event?.metaData?.startTime ?: ""}"
         binding.endDateTv.text = "${event?.metaData?.endDate ?: ""} ${event?.metaData?.endTime ?: ""}"
         binding.addressTv.text = event?.metaData?.address ?: "No Address Available"
