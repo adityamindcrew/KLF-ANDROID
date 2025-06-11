@@ -25,6 +25,7 @@ import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 import com.vanshika.klf.databinding.ActivityScannerBinding
 import java.util.concurrent.Executors
+import androidx.core.net.toUri
 
 class ScannerActivity : AppCompatActivity() {
 
@@ -37,7 +38,8 @@ class ScannerActivity : AppCompatActivity() {
                 showPermissionDeniedToast()
             }
         }
-
+    // Flag to ensure the dialog opens only once per scan
+    private var isBarcodeScanned = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityScannerBinding.inflate(layoutInflater)
@@ -106,8 +108,13 @@ class ScannerActivity : AppCompatActivity() {
             scanner.process(image)
                 .addOnSuccessListener { barcodes ->
                     barcodes.firstOrNull()?.rawValue?.let { rawValue ->
-                        runOnUiThread {
-                            handleBarcode(rawValue)
+                        // Only handle the barcode if it hasn't been scanned already
+                        if (!isBarcodeScanned && rawValue.isNotEmpty()) {
+                            runOnUiThread {
+                                handleBarcode(rawValue)
+                                // Set the flag to true after successful scan
+                                isBarcodeScanned = true
+                            }
                         }
                     }
                 }
@@ -126,18 +133,21 @@ class ScannerActivity : AppCompatActivity() {
                 setTitle("Alert")
                 setMessage("Click on open link to verify the QR.")
                 setPositiveButton("Open Link") { _, _ ->
-                    val intent = Intent("android.intent.action.VIEW")
+                    val intent = Intent("android.intent.action.VIEW", rawValue.toUri())
                     startActivity(intent)
                     finish()
                 }
                 setNegativeButton("Cancel") { dialog, _ ->
-                    println("QR Code: $rawValue")
                     val intent = Intent()
                     intent.putExtra(EventDetailActivity.SCANNED_RESULT, true)
                     intent.putExtra(EventDetailActivity.SCANNED_VALUE, rawValue)
                     setResult(RESULT_OK, intent)
                     dialog.dismiss()
                     finish()
+                }
+                // Reset the flag when the dialog is dismissed
+                setOnDismissListener {
+                    isBarcodeScanned = false
                 }
                 create().show()
             }
